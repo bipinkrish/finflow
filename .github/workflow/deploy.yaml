@@ -1,0 +1,52 @@
+name: Deploy Next.js Project to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js (use the version specified in your project)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Replace with the version of Node.js you need
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Build and export the Next.js project (adjust if needed)
+      - name: Build and export Next.js project
+        run: |
+          npm run build     # Build the project
+
+      # Step 5: Configure Git for deployment
+      - name: Set up Git configuration
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      # Step 6: Deploy the build to gh-pages branch
+      - name: Deploy to gh-pages
+        run: |
+          # Fetch the latest gh-pages branch or create one if it doesn't exist
+          git fetch --prune --unshallow
+          git checkout gh-pages || git checkout --orphan gh-pages
+          rm -rf ./*            # Remove old files in the gh-pages branch
+          cp -R out/* .         # Copy the exported files from Next.js' out directory
+          git add --all
+          git commit -m "Deploy Next.js app to GitHub Pages"
+          git push --force origin gh-pages  # Push to gh-pages with force to overwrite
+
+      # Step 7: Success message
+      - name: Deployment successful
+        run: echo "Deployment to GitHub Pages successful!"

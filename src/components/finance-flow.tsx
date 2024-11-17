@@ -1,0 +1,214 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
+import { Sun, Moon } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  calculateSIP,
+  calculateSWP,
+  type CalculationResult,
+} from "@/lib/calculations";
+import { GrowthChart } from "@/components/growth-chart";
+import { BreakdownChart } from "@/components/breakdown-chart";
+import { MilestoneChart } from "@/components/milestone-chart";
+import { FormattedNumberInput } from "./fromat-number-input";
+import { DefaultCalcValues } from "@/lib/constants";
+import LOGO from "@/app/favicon.png";
+import LOGO_LIGHT from "@/app/favicon-light.png";
+import Image from "next/image";
+
+export function FinanceFlow() {
+  const [initialInvestment, setInitialInvestment] = useState(0);
+  const [monthlyAmount, setMonthlyAmount] = useState(0);
+  const [expectedReturnRate, setExpectedReturnRate] = useState(0);
+  const [yearlyChangePercentage, setYearlyChangePercentage] = useState(0);
+  const [yearsToProject, setYearsToProject] = useState(0);
+  const [calculatorType, setCalculatorType] = useState("SIP");
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [results, setResults] = useState<CalculationResult>({
+    croresMilestones: [],
+    chartData: [],
+    pieChartData: [],
+  });
+  const showGraphs = initialInvestment > 0 || monthlyAmount > 0;
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setIsDarkMode(prefersDark);
+    document.documentElement.classList.toggle("dark", prefersDark);
+  }, []);
+
+  useEffect(() => {
+    const params = {
+      initialInvestment,
+      monthlyAmount,
+      expectedReturnRate,
+      yearlyChangePercentage,
+      yearsToProject,
+    };
+
+    const result =
+      calculatorType === "SIP" ? calculateSIP(params) : calculateSWP(params);
+
+    setResults(result);
+  }, [
+    initialInvestment,
+    monthlyAmount,
+    expectedReturnRate,
+    yearlyChangePercentage,
+    yearsToProject,
+  ]);
+
+  useEffect(() => {
+    const defaultValues = DefaultCalcValues[calculatorType];
+    setInitialInvestment(defaultValues.initial);
+    setMonthlyAmount(defaultValues.monthly);
+    setExpectedReturnRate(defaultValues.expected);
+    setYearlyChangePercentage(defaultValues.yearly);
+    setYearsToProject(defaultValues.years);
+  }, [calculatorType]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark");
+  };
+
+  return (
+    <Card className={`w-full max-w-3xl mx-auto ${isDarkMode ? "dark" : ""}`}>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32}/>FinFlow</CardTitle>
+          <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+            {isDarkMode ? (
+              <Sun className="h-[1.2rem] w-[1.2rem]" />
+            ) : (
+              <Moon className="h-[1.2rem] w-[1.2rem]" />
+            )}
+          </Button>
+        </div>
+        <CardDescription>
+          <div className="flex justify-between items-center">
+            <span>
+              Plan your financial future with our dynamic SIP/SWP calculator
+            </span>
+            <ToggleGroup
+              type="single"
+              value={calculatorType}
+              onValueChange={(value) => value && setCalculatorType(value)}
+            >
+              <ToggleGroupItem value="SIP">SIP</ToggleGroupItem>
+              <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Separator className="mb-4" />
+        <div className="grid gap-4 mb-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* Row 1: Initial Investment and Monthly Investment */}
+          <div className="flex gap-4 md:col-span-full">
+            <div className="flex-1">
+              <label htmlFor="initialInvestment">Initial Investment (₹)</label>
+              <FormattedNumberInput
+                id="initialInvestment"
+                value={initialInvestment}
+                onChange={setInitialInvestment}
+                step={1_00_000}
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="monthlyAmount">
+                Monthly {calculatorType == "SIP" ? "Investemnt" : "Withdrawal"}{" "}
+                (₹)
+              </label>
+              <FormattedNumberInput
+                id="monthlyAmount"
+                value={monthlyAmount}
+                onChange={setMonthlyAmount}
+                step={1_000}
+              />
+            </div>
+          </div>
+
+          {/* Row 2: Expected Return Rate and Yearly Change */}
+          <div className="flex gap-4 md:col-span-full">
+            <div className="flex-1">
+              <Label htmlFor="expectedReturnRate">
+                Expected Return Rate (%)
+              </Label>
+              <Input
+                id="expectedReturnRate"
+                type="number"
+                value={expectedReturnRate}
+                onChange={(e) => setExpectedReturnRate(Number(e.target.value))}
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="yearlyChangePercentage">
+                Yearly {calculatorType} Change (%)
+              </Label>
+              <Input
+                id="yearlyChangePercentage"
+                type="number"
+                value={yearlyChangePercentage}
+                onChange={(e) =>
+                  setYearlyChangePercentage(Number(e.target.value))
+                }
+              />
+            </div>
+          </div>
+
+          {/* Slider */}
+          <div className="flex items-center gap-4 col-span-full mt-2">
+            <Label htmlFor="yearsToProject" className="whitespace-nowrap">
+              Years to Project: {yearsToProject}
+            </Label>
+            <Slider
+              id="yearsToProject"
+              min={1}
+              max={50}
+              step={1}
+              value={[yearsToProject]}
+              onValueChange={(value) => setYearsToProject(value[0])}
+              className="flex-1"
+            />
+          </div>
+        </div>
+
+        {/* Graphs */}
+        <Separator className="mt-8 mb-4" />
+        {showGraphs ? (
+          <div className="grid gap-6">
+            <GrowthChart
+              data={results.chartData}
+              calculatorType={calculatorType}
+            />
+            <BreakdownChart
+              data={results.pieChartData}
+              calculatorType={calculatorType}
+            />
+            <MilestoneChart data={results.croresMilestones} />
+          </div>
+        ) : (
+          <div className="text-center text-sm text-muted-foreground">
+            Enter some values to see the projections
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
