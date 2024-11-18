@@ -43,10 +43,10 @@ export function FormattedNumberInput({
           onWheel={(e) => (e.target as HTMLInputElement).blur()}
           inputMode="numeric"
           step={step}
-          className="pr-24"
+          className="py-1 pl-2 pr-10"
         />
 
-        <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l">
+        <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l rounded-lg">
           <Button
             variant="ghost"
             size="icon"

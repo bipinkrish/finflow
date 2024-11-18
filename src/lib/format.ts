@@ -10,18 +10,18 @@ export function formatNumberWithUnits(value: number) {
   if (value >= 1_00_00_000) {
     const formattedValue = (value / 1_00_00_000).toFixed(2);
     return parseFloat(formattedValue) % 1 === 0
-      ? parseInt(formattedValue) + " crore"
-      : formattedValue + " crore";
+      ? parseInt(formattedValue) + "Cr"
+      : formattedValue + "Cr";
   } else if (value >= 1_00_000) {
     const formattedValue = (value / 10_00_00).toFixed(2);
     return parseFloat(formattedValue) % 1 === 0
-      ? parseInt(formattedValue) + " lakh"
-      : formattedValue + " lakh";
+      ? parseInt(formattedValue) + "L"
+      : formattedValue + "L";
   }
   const formattedValue = (value / 1_000).toFixed(2);
   return parseFloat(formattedValue) % 1 === 0
-    ? parseInt(formattedValue) + " thousand"
-    : formattedValue + " thousand";
+    ? parseInt(formattedValue) + "K"
+    : formattedValue + "K";
 }
 
 export function parseFormattedValue(value: string) {

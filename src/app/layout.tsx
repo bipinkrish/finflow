@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "FinFlow",
-  description: "Plan your financial future with our dynamic SIP/SWP calculator",
+  description: "Plan your financial future with dynamic SIP/SWP calculator",
 };
 
 export default function RootLayout({

@@ -103,7 +103,7 @@ export function FinanceFlow() {
         <CardDescription>
           <div className="flex justify-between items-center">
             <span>
-              Plan your financial future with our dynamic SIP/SWP calculator
+              Plan your financial future with dynamic SIP/SWP calculator
             </span>
             <ToggleGroup
               type="single"
@@ -122,7 +122,7 @@ export function FinanceFlow() {
           {/* Row 1: Initial Investment and Monthly Investment */}
           <div className="flex gap-4 md:col-span-full">
             <div className="flex-1">
-              <label htmlFor="initialInvestment">Initial Investment (₹)</label>
+              <label htmlFor="initialInvestment">Initial Investment</label>
               <FormattedNumberInput
                 id="initialInvestment"
                 value={initialInvestment}
@@ -132,8 +132,8 @@ export function FinanceFlow() {
             </div>
             <div className="flex-1">
               <label htmlFor="monthlyAmount">
-                Monthly {calculatorType == "SIP" ? "Investemnt" : "Withdrawal"}{" "}
-                (₹)
+                Monthly {calculatorType == "SIP" ? "Investment" : "Withdrawal"}{" "}
+
               </label>
               <FormattedNumberInput
                 id="monthlyAmount"
