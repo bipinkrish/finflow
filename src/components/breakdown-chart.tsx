@@ -14,11 +14,11 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
   }
 
   return (
-    <div className="w-full flex gap-4 items-start">
+    <div className="w-full flex flex-col md:flex-row md:gap-4 items-start">
       {/* Left: Chart */}
       <div className="flex-1">
-        <h3 className="text-lg font-semibold mb-4">
-          {calculatorType == "SIP" ? "Investment" : "Withdrawl"} Breakdown
+        <h3 className="text-lg font-semibold mb-4 w-max">
+          {calculatorType === "SIP" ? "Investment" : "Withdrawal"} Breakdown
         </h3>
         <ChartContainer
           config={{
@@ -31,7 +31,7 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
               color: colors.graphs.profit,
             },
           }}
-          className="h-[200px]"
+          className="h-[200px] -ml-[20%] md:ml-0"
         >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -71,27 +71,38 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
       </div>
 
       {/* Right: Labels and Values */}
-      <div className="flex-1 h-full content-center">
-        <ul className="space-y-2">
+      <div className="flex-1 h-full content-center flex-col md:flex-row md:mt-0 w-2/4 ml-[5%] md:ml-0 md:mr-[16%]">
+        <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
           {[colors.graphs.investment, colors.graphs.profit].map(
             (color, index) => (
               <li key={index} className="flex items-center">
                 <div
                   className="w-4 h-4 rounded-full mr-2"
                   style={{ backgroundColor: color }}
-                ></div>
-                <div className="mr-4">
-                  <span className="text-sm font-medium">
-                    {data[index].name}
-                  </span>
-                </div>
-                <div className="font-semibold">
+                />
+                <span className="text-sm font-medium">
+                  {data[index].name}
+                </span>
+                <span className="font-semibold ml-auto">
                   ₹{formatNumberWithUnits(data[index].value)}
-                </div>
+                </span>
               </li>
             )
           )}
         </ul>
+        <hr className="my-2" />
+        <div className="text-sm font-medium flex items-center">
+          <div
+            className="w-4 h-4 rounded-full mr-2"
+            style={{
+              background: `linear-gradient(-60deg, ${colors.graphs.investment} 50%, ${colors.graphs.profit} 50%)`,
+            }}
+          />
+          Total Value
+          <span className="font-semibold ml-auto">
+            ₹{formatNumberWithUnits(data[0].value + data[1].value)}
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import {
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { colors } from "@/lib/colors";
 import { formatYearsFraction } from "@/lib/format";
+import { calcGraphsSize } from "@/lib/utils";
 
 interface MilestoneChartProps {
   data: Array<{
@@ -22,10 +23,11 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
   if (data.length < 1) {
     return null;
   }
+  const heightWeightStyle = calcGraphsSize();
 
   return (
     <div className="w-full">
-      <h3 className="text-lg font-semibold mb-4">Crore Milestones</h3>
+      <h3 className="text-lg font-semibold mb-4 w-max">Crore Milestones</h3>
       <ChartContainer
         config={{
           timeFromPrevious: {
@@ -33,12 +35,11 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             color: colors.graphs.milestone,
           },
         }}
-        className="h-[400px]"
+        style={heightWeightStyle}
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
@@ -51,7 +52,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             />
             <YAxis
               label={{
-                value: "Years from Previous Crore",
+                value: "Time Jump",
                 angle: -90,
                 position: "insideLeft",
               }}

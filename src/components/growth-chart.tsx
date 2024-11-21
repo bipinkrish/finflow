@@ -9,6 +9,7 @@ import {
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { colors } from "@/lib/colors";
 import { formatCurrency } from "@/lib/format";
+import { calcGraphsSize } from "@/lib/utils";
 
 interface GrowthChartProps {
   data: Array<{ year: number; value: number }>;
@@ -19,10 +20,11 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
   if (!data.some((d) => d.value > 0)) {
     return null;
   }
+  const heightWeightStyle = calcGraphsSize(2);
 
   return (
     <div className="w-full">
-      <h3 className="text-lg font-semibold mb-4">
+      <h3 className="text-lg font-semibold mb-4 w-max">
         {calculatorType == "SIP" ? "Investment Growth" : "Withdrawl"} Chart
       </h3>
       <ChartContainer
@@ -32,12 +34,12 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
             color: colors.graphs.growth,
           },
         }}
-        className="h-[400px]"
+        style={{...heightWeightStyle, marginLeft: "-3%"}}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            // margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="year" />

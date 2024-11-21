@@ -70,3 +70,15 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.md\:mr-16percent {
+  margin-right: 16%;
+}
+
+.md\:ml-5percent {
+  margin-left: 5%;
+}
+
+.md\:ml-negative-20percent {
+  margin-left: -20%;
+}

@@ -12,6 +12,8 @@ interface NumberInputProps {
   value: number;
   onChange: (value: number) => void;
   step?: number;
+  unit?: string;
+  showFooter?: Boolean;
 }
 
 export function FormattedNumberInput({
@@ -19,19 +21,27 @@ export function FormattedNumberInput({
   value,
   onChange,
   step = 1000,
+  unit = "",
+  showFooter = true,
 }: NumberInputProps) {
   const formattedValue = formatNumberWithUnits(value);
   const stepFormatted = formatNumberWithUnits(step);
 
   const onValueChange = (rawValue: number) => {
-    if (!isNaN(rawValue) && rawValue >= 0) {
-      onChange(rawValue);
+    if (isNaN(rawValue) || rawValue < 0) {
+      rawValue = 0;
     }
+    onChange(rawValue);
   };
 
   return (
     <>
       <div className="relative flex items-center">
+        {unit && (
+          <span className="absolute left-0 top-0 bottom-0 border-r rounded-lg p-1 content-center">
+            {unit}
+          </span>
+        )}
         <Input
           id={id}
           type="text"
@@ -43,7 +53,7 @@ export function FormattedNumberInput({
           onWheel={(e) => (e.target as HTMLInputElement).blur()}
           inputMode="numeric"
           step={step}
-          className="py-1 pl-2 pr-10"
+          className={`"py-1 pr-10 ${unit ? 'pl-8' : 'pl-2'}`}
         />
 
         <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l rounded-lg">
@@ -63,10 +73,12 @@ export function FormattedNumberInput({
           </Button>
         </div>
       </div>
-      <div className="flex justify-between text-right text-sm text-muted-foreground mx-2">
-        <span>{formattedValue}</span>
-        <span>+{stepFormatted}</span>
-      </div>
+      {showFooter && (
+        <div className="flex justify-between text-right text-sm text-muted-foreground mx-2">
+          <span>{formattedValue}</span>
+          <span>+{stepFormatted}</span>
+        </div>
+      )}
     </>
   );
 }

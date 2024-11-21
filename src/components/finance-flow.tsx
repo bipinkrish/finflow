@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -25,8 +24,8 @@ import { BreakdownChart } from "@/components/breakdown-chart";
 import { MilestoneChart } from "@/components/milestone-chart";
 import { FormattedNumberInput } from "./fromat-number-input";
 import { DefaultCalcValues } from "@/lib/constants";
-import LOGO from "@/app/favicon.png";
-import LOGO_LIGHT from "@/app/favicon-light.png";
+import LOGO from "@/app/images/favicon.png";
+import LOGO_LIGHT from "@/app/images/favicon-light.png";
 import Image from "next/image";
 
 export function FinanceFlow() {
@@ -91,7 +90,7 @@ export function FinanceFlow() {
     <Card className={`w-full max-w-3xl mx-auto ${isDarkMode ? "dark" : ""}`}>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32}/>FinFlow</CardTitle>
+          <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />FinFlow</CardTitle>
           <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
             {isDarkMode ? (
               <Sun className="h-[1.2rem] w-[1.2rem]" />
@@ -118,9 +117,9 @@ export function FinanceFlow() {
       </CardHeader>
       <CardContent>
         <Separator className="mb-4" />
-        <div className="grid gap-4 mb-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 mb-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {/* Row 1: Initial Investment and Monthly Investment */}
-          <div className="flex gap-4 md:col-span-full">
+          <div className="grid gap-4 md:col-span-full md:grid-cols-2">
             <div className="flex-1">
               <label htmlFor="initialInvestment">Initial Investment</label>
               <FormattedNumberInput
@@ -128,46 +127,47 @@ export function FinanceFlow() {
                 value={initialInvestment}
                 onChange={setInitialInvestment}
                 step={1_00_000}
+                unit="₹"
               />
             </div>
             <div className="flex-1">
               <label htmlFor="monthlyAmount">
-                Monthly {calculatorType == "SIP" ? "Investment" : "Withdrawal"}{" "}
-
+                Monthly {calculatorType == "SIP" ? "Investment" : "Withdrawal"}
               </label>
               <FormattedNumberInput
                 id="monthlyAmount"
                 value={monthlyAmount}
                 onChange={setMonthlyAmount}
                 step={1_000}
+                unit="₹"
               />
             </div>
           </div>
 
           {/* Row 2: Expected Return Rate and Yearly Change */}
-          <div className="flex gap-4 md:col-span-full">
+          <div className="grid gap-4 md:col-span-full md:grid-cols-2">
             <div className="flex-1">
-              <Label htmlFor="expectedReturnRate">
-                Expected Return Rate (%)
-              </Label>
-              <Input
+              <Label htmlFor="expectedReturnRate">Expected Return Rate</Label>
+              <FormattedNumberInput
                 id="expectedReturnRate"
-                type="number"
                 value={expectedReturnRate}
-                onChange={(e) => setExpectedReturnRate(Number(e.target.value))}
+                onChange={setExpectedReturnRate}
+                step={1}
+                unit="%"
+                showFooter={false}
               />
             </div>
             <div className="flex-1">
               <Label htmlFor="yearlyChangePercentage">
-                Yearly {calculatorType} Change (%)
+                Yearly {calculatorType} Increase
               </Label>
-              <Input
+              <FormattedNumberInput
                 id="yearlyChangePercentage"
-                type="number"
                 value={yearlyChangePercentage}
-                onChange={(e) =>
-                  setYearlyChangePercentage(Number(e.target.value))
-                }
+                onChange={setYearlyChangePercentage}
+                step={1}
+                unit="%"
+                showFooter={false}
               />
             </div>
           </div>
@@ -192,7 +192,7 @@ export function FinanceFlow() {
         {/* Graphs */}
         <Separator className="mt-8 mb-4" />
         {showGraphs ? (
-          <div className="grid gap-6">
+          <div className="grid gap-6" id="graphs-container">
             <GrowthChart
               data={results.chartData}
               calculatorType={calculatorType}
