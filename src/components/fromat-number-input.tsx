@@ -13,7 +13,7 @@ interface NumberInputProps {
   onChange: (value: number) => void;
   step?: number;
   unit?: string;
-  showFooter?: Boolean;
+  showFooter?: boolean;
 }
 
 export function FormattedNumberInput({
