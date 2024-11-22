@@ -7,6 +7,9 @@ export function formatCurrency(value: number) {
 }
 
 export function formatNumberWithUnits(value: number) {
+  if (value == 0) {
+    return "Zero";
+  }
   if (value >= 1_00_00_000) {
     const formattedValue = (value / 1_00_00_000).toFixed(2);
     return parseFloat(formattedValue) % 1 === 0
