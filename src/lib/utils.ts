@@ -27,6 +27,7 @@ const pdfOptions = {
   pagebreak: { mode: 'avoid-all', }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cachedHtml2pdf: any = null;
 export const handleDownloadPDF = async () => {
   try {
@@ -39,7 +40,7 @@ export const handleDownloadPDF = async () => {
 
     const element = document.getElementById(exportPdfId);
     if (!element) {
-      console.error(`Element with ID "${exportPdfId}" not found.`);
+      console.error(`Element not found.`);
       return;
     }
 
