@@ -97,7 +97,7 @@ export function FinanceFlow() {
   };
 
   return (
-    <Card id={exportPdfId} className={`w-full max-w-3xl mx-auto ${isDarkMode ? "dark" : ""}`}>
+    <Card id={exportPdfId} className={`w-full max-w-3xl mx-auto my-2 ${isDarkMode ? "dark" : ""}`}>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />FinFlow</CardTitle>

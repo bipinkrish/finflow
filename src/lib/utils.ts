@@ -12,14 +12,14 @@ export const calcGraphsSize = (percentIncrese: number = 0) => {
   const graphsContainer = document.querySelector("#graphs-container");
   const width = graphsContainer?.clientWidth + "px";
   const heightWeightStyle = {
-    height: `${Math.round(300 * scale)}px`,
+    height: `${Math.round(500 * scale)}px`,
     width: `calc(${width} + ${percentIncrese}%)`,
   }
   return heightWeightStyle;
 }
 
 export const exportPdfId = "export-card-container";
-const pdfFileName = "FinFlow-Card.pdf";
+const pdfFileName = "FinFlow.pdf";
 
 export const handleDownloadPDF = () => {
   const cardElement = document.getElementById(exportPdfId);
