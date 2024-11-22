@@ -1,4 +1,4 @@
-interface CalculationParams {
+export interface CalculationParams {
   initialInvestment: number;
   monthlyAmount: number;
   expectedReturnRate: number;
@@ -6,7 +6,7 @@ interface CalculationParams {
   yearsToProject: number;
 }
 
-interface CalculationResult {
+export interface CalculationResult {
   croresMilestones: Array<{
     crores: number;
     years: number;

@@ -1,7 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -20,20 +18,36 @@ export const calcGraphsSize = (percentIncrese: number = 0) => {
 
 export const exportPdfId = "export-card-container";
 const pdfFileName = "FinFlow.pdf";
+const pdfOptions = {
+  margin: 4,
+  filename: pdfFileName,
+  image: { type: 'jpeg', quality: 100 },
+  html2canvas: { scale: 2 },
+  jsPDF: { orientation: 'portrait' },
+  pagebreak: { mode: 'avoid-all', }
+};
 
-export const handleDownloadPDF = () => {
-  const cardElement = document.getElementById(exportPdfId);
+let cachedHtml2pdf: any = null;
+export const handleDownloadPDF = async () => {
+  try {
+    if (!cachedHtml2pdf) {
+      // @ts-expect-error dynamic load
+      const html2pdfModule = await import("@0x170818/html2pdf");
+      cachedHtml2pdf = html2pdfModule.default || html2pdfModule;
+    }
+    const html2pdf = cachedHtml2pdf;
 
-  if (cardElement) {
-    html2canvas(cardElement, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+    const element = document.getElementById(exportPdfId);
+    if (!element) {
+      console.error(`Element with ID "${exportPdfId}" not found.`);
+      return;
+    }
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(pdfFileName);
-    });
+    html2pdf()
+      .set(pdfOptions)
+      .from(element)
+      .save();
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
   }
 };
