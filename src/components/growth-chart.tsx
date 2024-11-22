@@ -10,6 +10,7 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { colors } from "@/lib/colors";
 import { formatCurrency } from "@/lib/format";
 import { calcGraphsSize } from "@/lib/utils";
+import { CRORE } from "@/lib/constants";
 
 interface GrowthChartProps {
   data: Array<{ year: number; value: number }>;
@@ -34,7 +35,7 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
             color: colors.graphs.growth,
           },
         }}
-        style={{...heightWeightStyle, marginLeft: "-4%"}}
+        style={{ ...heightWeightStyle, marginLeft: "-4%" }}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -43,9 +44,7 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="year" />
-            <YAxis
-              tickFormatter={(value) => `₹${(value / 1_00_00_000)}Cr`}
-            />
+            <YAxis tickFormatter={(value) => `₹${value / CRORE}Cr`} />
             <ChartTooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {

@@ -12,7 +12,7 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
   if (data.length < 2 || !data.some((d) => d.value > 0)) {
     return null;
   }
-  const isBiggerScreen = window.innerWidth > 768;
+  // const isBiggerScreen = window.innerWidth > 768;
 
   return (
     <div className="w-[86%] flex flex-col md:flex-row md:gap-4 items-start">
@@ -81,14 +81,13 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
                   className="w-4 h-4 rounded-full mr-2"
                   style={{ backgroundColor: color }}
                 />
-                <span className="text-sm font-medium">
-                  {data[index].name}
-                </span>
+                <span className="text-sm font-medium">{data[index].name}</span>
                 <span className="font-semibold ml-auto">
-                  {isBiggerScreen
+                  {/* {isBiggerScreen
                     ? formatCurrency(data[index].value)
                     : `₹${formatNumberWithUnits(data[index].value)}`
-                  }
+                  } */}
+                  ₹{formatNumberWithUnits(data[index].value)}
                 </span>
               </li>
             )
@@ -104,10 +103,11 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
           />
           Total Value
           <span className="font-semibold ml-auto text-base">
-            {isBiggerScreen
+            {/* {isBiggerScreen
               ? formatCurrency(data[0].value + data[1].value)
               : `₹${formatNumberWithUnits(data[0].value + data[1].value)}`
-            }
+            } */}
+            ₹{formatNumberWithUnits(data[0].value + data[1].value)}
           </span>
         </div>
       </div>

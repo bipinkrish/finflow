@@ -1,3 +1,8 @@
+import { CRORE } from "./constants";
+
+const inflationRate = 5; // per year
+const taxRate = 12.5; // of total
+
 export interface CalculationParams {
   initialInvestment: number;
   monthlyAmount: number;
@@ -22,10 +27,53 @@ export interface CalculationResult {
   }>;
 }
 
-function calculateInvestment(
-  params: CalculationParams & {
-    type: 'SIP' | 'SWP'
-  }
+function calculatePresentValue(
+  futureValue: number,
+  inflationRate: number,
+  years: number
+) {
+  const rate = inflationRate / 100;
+  return futureValue / Math.pow(1 + rate, years);
+}
+
+function calculateAfterTax(amount: number, taxRate: number) {
+  const rate = taxRate / 100;
+  return amount * (1 - rate);
+}
+
+function makeItReal(
+  { chartData, pieChartData, croresMilestones }: CalculationResult,
+  inflationRate: number,
+  taxRate: number,
+  yearsToProject: number
+): CalculationResult {
+  const realChartData = chartData.map(({ year, value }) => ({
+    year,
+    value: calculateAfterTax(
+      calculatePresentValue(value, inflationRate, year),
+      taxRate
+    ),
+  }));
+
+  const realPieChartData = pieChartData.map(({ name, value }) => ({
+    name,
+    value: calculateAfterTax(
+      calculatePresentValue(value, inflationRate, yearsToProject),
+      taxRate
+    ),
+  }));
+
+  return {
+    croresMilestones,
+    chartData: realChartData,
+    pieChartData: realPieChartData,
+  };
+}
+
+export function calculate(
+  params: CalculationParams,
+  type: "SIP" | "SWP",
+  realMode: boolean = false
 ): CalculationResult {
   const {
     initialInvestment,
@@ -33,10 +81,9 @@ function calculateInvestment(
     expectedReturnRate,
     yearlyChangePercentage,
     yearsToProject,
-    type
   } = params;
 
-  const initialCrore = Math.floor(initialInvestment / 1_00_00_000);
+  const initialCrore = Math.floor(initialInvestment / CRORE);
   let totalInvestment = initialInvestment;
   let monthlyAmountValue = monthlyAmount;
   let year = 0;
@@ -45,18 +92,19 @@ function calculateInvestment(
   let lastCroreYear = 0;
 
   // Track additional values based on calculation type
-  let totalContributed = type === 'SIP' ? initialInvestment : 0;
-  let totalWithdrawn = type === 'SWP' ? 0 : 0;
+  let totalContributed = type === "SIP" ? initialInvestment : 0;
+  let totalWithdrawn = type === "SWP" ? 0 : 0;
 
-  while (year < yearsToProject && (type === 'SIP' || totalInvestment > 0)) {
+  while (year < yearsToProject && (type === "SIP" || totalInvestment > 0)) {
     const yearValue = totalInvestment;
 
     for (let month = 1; month <= 12; month++) {
-      if (type === 'SIP') {
+      if (type === "SIP") {
         totalInvestment += monthlyAmountValue;
         totalContributed += monthlyAmountValue;
         totalInvestment *= 1 + expectedReturnRate / 100 / 12;
-      } else { // SWP
+      } else {
+        // SWP
         if (totalInvestment >= monthlyAmountValue) {
           totalInvestment -= monthlyAmountValue;
           totalWithdrawn += monthlyAmountValue;
@@ -79,17 +127,18 @@ function calculateInvestment(
       value: Math.round(totalInvestment),
     });
 
-    const currentCrore = Math.floor(totalInvestment / 1_00_00_000);
-    const croreThreshold = type === 'SWP' ?
-      croresMilestones.length + initialCrore :
-      croresMilestones.length;
+    const currentCrore = Math.floor(totalInvestment / CRORE);
+    const croreThreshold =
+      type === "SWP"
+        ? croresMilestones.length + initialCrore
+        : croresMilestones.length;
 
     if (currentCrore > croreThreshold) {
       const yearFraction =
         year -
         1 +
-        Math.log((1_00_00_000 * currentCrore) / yearValue) /
-        Math.log(yearValue / totalInvestment);
+        Math.log((CRORE * currentCrore) / yearValue) /
+          Math.log(yearValue / totalInvestment);
 
       croresMilestones.push({
         crores: currentCrore,
@@ -100,27 +149,25 @@ function calculateInvestment(
     }
   }
 
-  const pieChartData = type === 'SIP'
-    ? [
-      { name: "Total Invested", value: totalContributed },
-      { name: "Total Profit", value: totalInvestment - totalContributed },
-    ]
-    : [
-      { name: "Remaining Investment", value: totalInvestment },
-      { name: "Total Withdrawn", value: totalWithdrawn },
-    ];
+  const pieChartData =
+    type === "SIP"
+      ? [
+          { name: "Total Invested", value: totalContributed },
+          { name: "Total Profit", value: totalInvestment - totalContributed },
+        ]
+      : [
+          { name: "Remaining Investment", value: totalInvestment },
+          { name: "Total Withdrawn", value: totalWithdrawn },
+        ];
 
-  return {
-    croresMilestones,
+  const baseValues = {
     chartData,
     pieChartData,
+    croresMilestones,
   };
-}
 
-export function calculateSIP(params: CalculationParams): CalculationResult {
-  return calculateInvestment({ ...params, type: 'SIP' });
-}
-
-export function calculateSWP(params: CalculationParams): CalculationResult {
-  return calculateInvestment({ ...params, type: 'SWP' });
+  if (realMode) {
+    return makeItReal(baseValues, inflationRate, taxRate, yearsToProject);
+  }
+  return baseValues;
 }

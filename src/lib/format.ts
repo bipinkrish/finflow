@@ -1,3 +1,5 @@
+import { CRORE, LAKH, THOUSAND } from "./constants";
+
 export function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -10,18 +12,18 @@ export function formatNumberWithUnits(value: number) {
   if (value == 0) {
     return "Zero";
   }
-  if (value >= 1_00_00_000) {
-    const formattedValue = (value / 1_00_00_000).toFixed(2);
+  if (value >= CRORE) {
+    const formattedValue = (value / CRORE).toFixed(2);
     return parseFloat(formattedValue) % 1 === 0
       ? parseInt(formattedValue) + "Cr"
       : formattedValue + "Cr";
-  } else if (value >= 1_00_000) {
+  } else if (value >= LAKH) {
     const formattedValue = (value / 10_00_00).toFixed(2);
     return parseFloat(formattedValue) % 1 === 0
       ? parseInt(formattedValue) + "L"
       : formattedValue + "L";
   }
-  const formattedValue = (value / 1_000).toFixed(2);
+  const formattedValue = (value / THOUSAND).toFixed(2);
   return parseFloat(formattedValue) % 1 === 0
     ? parseInt(formattedValue) + "K"
     : formattedValue + "K";

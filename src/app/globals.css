@@ -94,3 +94,14 @@ html, body {
 .md\:w-86percent {
   margin-right: 86%;
 }
+
+.important-button.data-\[state\=on\]\:text-accent-foreground[data-state="on"] {
+  color: hsl(var(--secondary));
+}
+.important-button.data-\[state\=on\]\:bg-accent[data-state="on"] {
+  background-color: hsl(var(--primary));
+}
+
+.important-text {
+  color: hsl(var(--primary));
+}

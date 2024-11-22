@@ -6,6 +6,7 @@ import {
   formatNumberWithUnits,
   parseFormattedValue,
 } from "@/lib/format";
+import { THOUSAND } from "@/lib/constants";
 
 interface NumberInputProps {
   id: string;
@@ -20,7 +21,7 @@ export function FormattedNumberInput({
   id,
   value,
   onChange,
-  step = 1000,
+  step = THOUSAND,
   unit = "",
   showFooter = true,
 }: NumberInputProps) {
@@ -53,7 +54,7 @@ export function FormattedNumberInput({
           onWheel={(e) => (e.target as HTMLInputElement).blur()}
           inputMode="numeric"
           step={step}
-          className={`"py-1 pr-10 ${unit ? 'pl-8' : 'pl-2'}`}
+          className={`"py-1 pr-10 ${unit ? "pl-8" : "pl-2"}`}
         />
 
         <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l rounded-lg">

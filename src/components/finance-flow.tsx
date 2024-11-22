@@ -14,16 +14,13 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Sun, Moon, Github, Download } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  calculateSIP,
-  calculateSWP,
-  type CalculationResult,
-} from "@/lib/calculations";
+import { Toggle } from "@/components/ui/toggle";
+import { calculate, type CalculationResult } from "@/lib/calculations";
 import { GrowthChart } from "@/components/growth-chart";
 import { BreakdownChart } from "@/components/breakdown-chart";
 import { MilestoneChart } from "@/components/milestone-chart";
 import { FormattedNumberInput } from "./fromat-number-input";
-import { DefaultCalcValues } from "@/lib/constants";
+import { DefaultCalcValues, LAKH, THOUSAND } from "@/lib/constants";
 import LOGO from "@/app/images/favicon.png";
 import LOGO_LIGHT from "@/app/images/favicon-light.png";
 import Image from "next/image";
@@ -37,6 +34,7 @@ export function FinanceFlow() {
   const [yearsToProject, setYearsToProject] = useState(0);
   const [calculatorType, setCalculatorType] = useState("SIP");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [realMode, setRealMode] = useState(false);
   const [results, setResults] = useState<CalculationResult>({
     croresMilestones: [],
     chartData: [],
@@ -69,9 +67,11 @@ export function FinanceFlow() {
       yearsToProject,
     };
 
-    const result =
-      calculatorType === "SIP" ? calculateSIP(params) : calculateSWP(params);
-
+    const result = calculate(
+      params,
+      calculatorType === "SIP" ? "SIP" : "SWP",
+      realMode
+    );
     setResults(result);
   }, [
     initialInvestment,
@@ -79,6 +79,7 @@ export function FinanceFlow() {
     expectedReturnRate,
     yearlyChangePercentage,
     yearsToProject,
+    realMode,
   ]);
 
   useEffect(() => {
@@ -97,33 +98,62 @@ export function FinanceFlow() {
   };
 
   return (
-    <Card id={exportPdfId} className={`w-full max-w-3xl mx-auto my-2 ${isDarkMode ? "dark" : ""}`}>
+    <Card
+      id={exportPdfId}
+      className={`w-full max-w-3xl mx-auto my-2 ${isDarkMode ? "dark" : ""}`}
+    >
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />FinFlow</CardTitle>
+          <CardTitle className="flex items-end">
+            <Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />
+            FinFlow
+          </CardTitle>
           <div>
-            <a href="https://github.com/bipinkrish/finflow" target="_blank" rel="noopener noreferrer">
-              <Button variant="ghost" size="icon"><Github /></Button>
+            <a
+              href="https://github.com/bipinkrish/finflow"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" size="icon">
+                <Github />
+              </Button>
             </a>
             <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-              {isDarkMode ? <Sun /> : <Moon/>}
+              {isDarkMode ? <Sun /> : <Moon />}
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleDownloadPDF}><Download /></Button>
+            <Button variant="ghost" size="icon" onClick={handleDownloadPDF}>
+              <Download />
+            </Button>
           </div>
         </div>
         <CardDescription>
           <div className="flex justify-between items-center">
-            <span>
-              Plan your financial future with dynamic SIP/SWP calculator
-            </span>
-            <ToggleGroup
-              type="single"
-              value={calculatorType}
-              onValueChange={(value) => value && setCalculatorType(value)}
-            >
-              <ToggleGroupItem value="SIP">SIP</ToggleGroupItem>
-              <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
-            </ToggleGroup>
+            <div>
+              <span className="block">
+                Plan your financial future with dynamic SIP/SWP calculator
+              </span>
+              {realMode && (
+                <span className="important-text">
+                  Real Mode is on, 5% p.a. Inflation and 12.5% Tax is considered
+                </span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <ToggleGroup
+                type="single"
+                value={calculatorType}
+                onValueChange={(value) => value && setCalculatorType(value)}
+              >
+                <ToggleGroupItem value="SIP">SIP</ToggleGroupItem>
+                <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
+              </ToggleGroup>
+              <Toggle
+                onPressedChange={setRealMode}
+                className="important-button"
+              >
+                Real Mode
+              </Toggle>
+            </div>
           </div>
         </CardDescription>
       </CardHeader>
@@ -138,7 +168,7 @@ export function FinanceFlow() {
                 id="initialInvestment"
                 value={initialInvestment}
                 onChange={setInitialInvestment}
-                step={1_00_000}
+                step={LAKH}
                 unit="₹"
               />
             </div>
@@ -150,7 +180,7 @@ export function FinanceFlow() {
                 id="monthlyAmount"
                 value={monthlyAmount}
                 onChange={setMonthlyAmount}
-                step={1_000}
+                step={THOUSAND}
                 unit="₹"
               />
             </div>

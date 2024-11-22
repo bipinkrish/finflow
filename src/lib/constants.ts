@@ -1,3 +1,7 @@
+export const CRORE = 1_00_00_000;
+export const LAKH = 1_00_000;
+export const THOUSAND = 1_000;
+
 interface CalculationParams {
   initial: number;
   monthly: number;
@@ -20,7 +24,7 @@ export const DefaultCalcValues: DefaultValsParams = {
   },
   SWP: {
     initial: 5_00_00_000,
-    monthly: 1_00_000,
+    monthly: LAKH,
     expected: 10,
     yearly: 7,
     years: 30,
