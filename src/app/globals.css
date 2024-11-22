@@ -71,6 +71,10 @@ body {
   }
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 .md\:mr-16percent {
   margin-right: 16%;
 }

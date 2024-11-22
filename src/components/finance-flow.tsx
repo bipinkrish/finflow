@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Sun, Moon, Github } from "lucide-react";
+import { Sun, Moon, Github, Download } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   calculateSIP,
@@ -27,6 +27,7 @@ import { DefaultCalcValues } from "@/lib/constants";
 import LOGO from "@/app/images/favicon.png";
 import LOGO_LIGHT from "@/app/images/favicon-light.png";
 import Image from "next/image";
+import { exportPdfId, handleDownloadPDF } from "@/lib/utils";
 
 export function FinanceFlow() {
   const [initialInvestment, setInitialInvestment] = useState(0);
@@ -96,23 +97,18 @@ export function FinanceFlow() {
   };
 
   return (
-    <Card className={`w-full max-w-3xl mx-auto ${isDarkMode ? "dark" : ""}`}>
+    <Card id={exportPdfId} className={`w-full max-w-3xl mx-auto ${isDarkMode ? "dark" : ""}`}>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />FinFlow</CardTitle>
           <div>
             <a href="https://github.com/bipinkrish/finflow" target="_blank" rel="noopener noreferrer">
-              <Button variant="ghost" size="icon">
-                <Github />
-              </Button>
+              <Button variant="ghost" size="icon"><Github /></Button>
             </a>
             <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-              {isDarkMode ? (
-                <Sun className="h-[1.2rem] w-[1.2rem]" />
-              ) : (
-                <Moon className="h-[1.2rem] w-[1.2rem]" />
-              )}
+              {isDarkMode ? <Sun /> : <Moon/>}
             </Button>
+            <Button variant="ghost" size="icon" onClick={handleDownloadPDF}><Download /></Button>
           </div>
         </div>
         <CardDescription>
