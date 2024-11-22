@@ -82,3 +82,7 @@ body {
 .md\:ml-negative-20percent {
   margin-left: -20%;
 }
+
+.md\:w-48percent {
+  margin-right: 48%;
+}

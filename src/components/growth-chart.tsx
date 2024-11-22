@@ -20,7 +20,7 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
   if (!data.some((d) => d.value > 0)) {
     return null;
   }
-  const heightWeightStyle = calcGraphsSize(2);
+  const heightWeightStyle = calcGraphsSize(4);
 
   return (
     <div className="w-full">
@@ -34,7 +34,7 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
             color: colors.graphs.growth,
           },
         }}
-        style={{...heightWeightStyle, marginLeft: "-3%"}}
+        style={{...heightWeightStyle, marginLeft: "-4%"}}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -44,7 +44,7 @@ export function GrowthChart({ data, calculatorType }: GrowthChartProps) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="year" />
             <YAxis
-              tickFormatter={(value) => `₹${(value / 10000000).toFixed(1)}Cr`}
+              tickFormatter={(value) => `₹${(value / 1_00_00_000)}Cr`}
             />
             <ChartTooltip
               content={({ active, payload }) => {

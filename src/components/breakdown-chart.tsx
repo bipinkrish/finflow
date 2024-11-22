@@ -71,7 +71,7 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
       </div>
 
       {/* Right: Labels and Values */}
-      <div className="flex-1 h-full content-center flex-col md:flex-row md:mt-0 w-2/4 ml-[5%] md:ml-0 md:mr-[16%]">
+      <div className="flex-1 h-full content-center flex-col md:flex-row md:mt-0 md:ml-0 md:mr-[16%] w-1/2 -ml-2">
         <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
           {[colors.graphs.investment, colors.graphs.profit].map(
             (color, index) => (
@@ -99,7 +99,7 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
             }}
           />
           Total Value
-          <span className="font-semibold ml-auto">
+          <span className="font-semibold ml-auto text-base">
             ₹{formatNumberWithUnits(data[0].value + data[1].value)}
           </span>
         </div>

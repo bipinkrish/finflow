@@ -23,7 +23,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
   if (data.length < 1) {
     return null;
   }
-  const heightWeightStyle = calcGraphsSize();
+  const heightWeightStyle = calcGraphsSize(3);
 
   return (
     <div className="w-full">
@@ -35,7 +35,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             color: colors.graphs.milestone,
           },
         }}
-        style={heightWeightStyle}
+        style={{...heightWeightStyle, marginLeft: "-3%"}}
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -52,9 +52,10 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             />
             <YAxis
               label={{
-                value: "Time Jump",
+                value: "StopTime for each Crore",
                 angle: -90,
                 position: "insideLeft",
+                offset: 20,
               }}
             />
             <ChartTooltip

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Github } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   calculateSIP,
@@ -44,11 +44,19 @@ export function FinanceFlow() {
   const showGraphs = initialInvestment > 0 || monthlyAmount > 0;
 
   useEffect(() => {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    setIsDarkMode(prefersDark);
-    document.documentElement.classList.toggle("dark", prefersDark);
+    const savedPreference = localStorage.getItem("theme");
+
+    if (savedPreference) {
+      const isDark = savedPreference === "dark";
+      setIsDarkMode(isDark);
+      document.documentElement.classList.toggle("dark", isDark);
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setIsDarkMode(prefersDark);
+      document.documentElement.classList.toggle("dark", prefersDark);
+    }
   }, []);
 
   useEffect(() => {
@@ -84,6 +92,7 @@ export function FinanceFlow() {
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", !isDarkMode ? "dark" : "light");
   };
 
   return (
@@ -91,13 +100,20 @@ export function FinanceFlow() {
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-end"><Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />FinFlow</CardTitle>
-          <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-            {isDarkMode ? (
-              <Sun className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Moon className="h-[1.2rem] w-[1.2rem]" />
-            )}
-          </Button>
+          <div>
+            <a href="https://github.com/bipinkrish/finflow" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon">
+                <Github />
+              </Button>
+            </a>
+            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+              {isDarkMode ? (
+                <Sun className="h-[1.2rem] w-[1.2rem]" />
+              ) : (
+                <Moon className="h-[1.2rem] w-[1.2rem]" />
+              )}
+            </Button>
+          </div>
         </div>
         <CardDescription>
           <div className="flex justify-between items-center">
