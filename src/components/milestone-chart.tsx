@@ -52,7 +52,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             />
             <YAxis
               label={{
-                value: "StopTime for each Crore",
+                value: "Stoptime for each Crore",
                 angle: -90,
                 position: "insideLeft",
                 offset: 20,

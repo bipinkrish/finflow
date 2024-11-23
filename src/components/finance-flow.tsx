@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import {
   Card,
   CardContent,
@@ -25,6 +25,189 @@ import LOGO from "@/app/images/favicon.png";
 import LOGO_LIGHT from "@/app/images/favicon-light.png";
 import Image from "next/image";
 import { exportPdfId, handleDownloadPDF } from "@/lib/utils";
+import { CalculatorOptionsProps, GraphSectionProps, HeaderProps, InputSectionProps } from "@/lib/types";
+import packageJson from "../../package.json";
+const { version } = packageJson;
+
+export const Header: FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) => {
+  return (
+    <>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-end">
+            <Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />
+            FinFlow
+          </CardTitle>
+          <div>
+            <a
+              href="https://github.com/bipinkrish/finflow"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" size="icon">
+                <Github />
+              </Button>
+            </a>
+            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+              {isDarkMode ? <Sun /> : <Moon />}
+            </Button>
+            <Button variant="ghost" size="icon" onClick={handleDownloadPDF}>
+              <Download />
+            </Button>
+          </div>
+        </div>
+        <CardDescription>
+          Plan your financial future with dynamic SIP/SWP calculator
+        </CardDescription>
+      </CardHeader>
+    </>
+  );
+}
+
+export const CalculatorOptions: FC<CalculatorOptionsProps> = ({
+  calculatorType,
+  setCalculatorType,
+  realMode,
+  setRealMode,
+}) => {
+  return (
+    <>
+      <div className="flex flex-wrap place-content-between items-center mb-4 gap-4">
+        <div className="flex gap-2">
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            value={calculatorType}
+            onValueChange={(value) => value && setCalculatorType(value)}
+          >
+            <ToggleGroupItem value="SIP">SIP</ToggleGroupItem>
+            <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div className="flex items-center gap-1 md:gap-2">
+          <Toggle
+            variant="outline"
+            onPressedChange={setRealMode}
+            className="important-button"
+          >
+            Real Mode
+          </Toggle>
+          <div className="text-xs text-muted-foreground text-center sm:text-left sm:ml-4 w-full sm:w-auto">
+            <span className="block">5% p.a. Inflation and 12.5%</span>
+            <span className="block">LTCG Tax will be considered.</span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export const InputSection: FC<InputSectionProps> = ({
+  calculatorType,
+  initialInvestment,
+  setInitialInvestment,
+  monthlyAmount,
+  setMonthlyAmount,
+  expectedReturnRate,
+  setExpectedReturnRate,
+  yearlyChangePercentage,
+  setYearlyChangePercentage,
+  yearsToProject,
+  setYearsToProject
+}) => {
+  return (
+    <div className="grid gap-4 mb-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:col-span-full md:grid-cols-2">
+        <div className="flex-1">
+          <label htmlFor="initialInvestment">Initial Investment</label>
+          <FormattedNumberInput
+            id="initialInvestment"
+            value={initialInvestment}
+            onChange={setInitialInvestment}
+            step={LAKH}
+            unit="₹"
+          />
+        </div>
+        <div className="flex-1">
+          <label htmlFor="monthlyAmount">
+            Monthly {calculatorType == "SIP" ? "Investment" : "Withdrawal"}
+          </label>
+          <FormattedNumberInput
+            id="monthlyAmount"
+            value={monthlyAmount}
+            onChange={setMonthlyAmount}
+            step={THOUSAND}
+            unit="₹"
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:col-span-full md:grid-cols-2">
+        <div className="flex-1">
+          <Label htmlFor="expectedReturnRate">Expected Return Rate</Label>
+          <FormattedNumberInput
+            id="expectedReturnRate"
+            value={expectedReturnRate}
+            onChange={setExpectedReturnRate}
+            step={1}
+            unit="%"
+            showFooter={false}
+          />
+        </div>
+        <div className="flex-1">
+          <Label htmlFor="yearlyChangePercentage">
+            Yearly {calculatorType} Increase
+          </Label>
+          <FormattedNumberInput
+            id="yearlyChangePercentage"
+            value={yearlyChangePercentage}
+            onChange={setYearlyChangePercentage}
+            step={1}
+            unit="%"
+            showFooter={false}
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 col-span-full mt-2">
+        <Label htmlFor="yearsToProject" className="whitespace-nowrap">
+          Years to Project: {yearsToProject}
+        </Label>
+        <Slider
+          id="yearsToProject"
+          min={1}
+          max={50}
+          step={1}
+          value={[yearsToProject]}
+          onValueChange={(value) => setYearsToProject(value[0])}
+          className="flex-1"
+        />
+      </div>
+    </div>
+  );
+}
+
+export const GraphSection: FC<GraphSectionProps> = ({
+  showGraphs,
+  results,
+  calculatorType
+}) => {
+  if (!showGraphs) {
+    return (
+      <div className="text-center text-sm text-muted-foreground">
+        No Values to see the projections
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-6" id="graphs-container">
+      <GrowthChart data={results.chartData} calculatorType={calculatorType} />
+      <BreakdownChart data={results.pieChartData} calculatorType={calculatorType} />
+      <MilestoneChart data={results.croresMilestones} />
+    </div>
+  );
+}
 
 export function FinanceFlow() {
   const [initialInvestment, setInitialInvestment] = useState(0);
@@ -98,159 +281,41 @@ export function FinanceFlow() {
   };
 
   return (
-    <Card
-      id={exportPdfId}
-      className={`w-full max-w-3xl mx-auto my-2 ${isDarkMode ? "dark" : ""}`}
-    >
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-end">
-            <Image src={isDarkMode ? LOGO : LOGO_LIGHT} alt="FF" width={32} />
-            FinFlow
-          </CardTitle>
-          <div>
-            <a
-              href="https://github.com/bipinkrish/finflow"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="ghost" size="icon">
-                <Github />
-              </Button>
-            </a>
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-              {isDarkMode ? <Sun /> : <Moon />}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleDownloadPDF}>
-              <Download />
-            </Button>
-          </div>
-        </div>
-        <CardDescription>
-          <div className="flex justify-between items-center">
-            <div>
-              <span className="block">
-                Plan your financial future with dynamic SIP/SWP calculator
-              </span>
-              {realMode && (
-                <span className="important-text">
-                  Real Mode is on, 5% p.a. Inflation and 12.5% Tax is considered
-                </span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <ToggleGroup
-                type="single"
-                value={calculatorType}
-                onValueChange={(value) => value && setCalculatorType(value)}
-              >
-                <ToggleGroupItem value="SIP">SIP</ToggleGroupItem>
-                <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
-              </ToggleGroup>
-              <Toggle
-                onPressedChange={setRealMode}
-                className="important-button"
-              >
-                Real Mode
-              </Toggle>
-            </div>
-          </div>
-        </CardDescription>
-      </CardHeader>
+    <Card id={exportPdfId} className={`w-full max-w-3xl mx-auto my-2 ${isDarkMode ? "dark" : ""}`}>
+      <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       <CardContent>
         <Separator className="mb-4" />
-        <div className="grid gap-4 mb-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {/* Row 1: Initial Investment and Monthly Investment */}
-          <div className="grid gap-4 md:col-span-full md:grid-cols-2">
-            <div className="flex-1">
-              <label htmlFor="initialInvestment">Initial Investment</label>
-              <FormattedNumberInput
-                id="initialInvestment"
-                value={initialInvestment}
-                onChange={setInitialInvestment}
-                step={LAKH}
-                unit="₹"
-              />
-            </div>
-            <div className="flex-1">
-              <label htmlFor="monthlyAmount">
-                Monthly {calculatorType == "SIP" ? "Investment" : "Withdrawal"}
-              </label>
-              <FormattedNumberInput
-                id="monthlyAmount"
-                value={monthlyAmount}
-                onChange={setMonthlyAmount}
-                step={THOUSAND}
-                unit="₹"
-              />
-            </div>
-          </div>
-
-          {/* Row 2: Expected Return Rate and Yearly Change */}
-          <div className="grid gap-4 md:col-span-full md:grid-cols-2">
-            <div className="flex-1">
-              <Label htmlFor="expectedReturnRate">Expected Return Rate</Label>
-              <FormattedNumberInput
-                id="expectedReturnRate"
-                value={expectedReturnRate}
-                onChange={setExpectedReturnRate}
-                step={1}
-                unit="%"
-                showFooter={false}
-              />
-            </div>
-            <div className="flex-1">
-              <Label htmlFor="yearlyChangePercentage">
-                Yearly {calculatorType} Increase
-              </Label>
-              <FormattedNumberInput
-                id="yearlyChangePercentage"
-                value={yearlyChangePercentage}
-                onChange={setYearlyChangePercentage}
-                step={1}
-                unit="%"
-                showFooter={false}
-              />
-            </div>
-          </div>
-
-          {/* Slider */}
-          <div className="flex items-center gap-4 col-span-full mt-2">
-            <Label htmlFor="yearsToProject" className="whitespace-nowrap">
-              Years to Project: {yearsToProject}
-            </Label>
-            <Slider
-              id="yearsToProject"
-              min={1}
-              max={50}
-              step={1}
-              value={[yearsToProject]}
-              onValueChange={(value) => setYearsToProject(value[0])}
-              className="flex-1"
-            />
-          </div>
-        </div>
-
-        {/* Graphs */}
+        <CalculatorOptions
+          calculatorType={calculatorType}
+          setCalculatorType={setCalculatorType}
+          realMode={realMode}
+          setRealMode={setRealMode}
+        />
+        <Separator className="mb-4" />
+        <InputSection
+          calculatorType={calculatorType}
+          initialInvestment={initialInvestment}
+          setInitialInvestment={setInitialInvestment}
+          monthlyAmount={monthlyAmount}
+          setMonthlyAmount={setMonthlyAmount}
+          expectedReturnRate={expectedReturnRate}
+          setExpectedReturnRate={setExpectedReturnRate}
+          yearlyChangePercentage={yearlyChangePercentage}
+          setYearlyChangePercentage={setYearlyChangePercentage}
+          yearsToProject={yearsToProject}
+          setYearsToProject={setYearsToProject}
+        />
         <Separator className="mt-8 mb-4" />
-        {showGraphs ? (
-          <div className="grid gap-6" id="graphs-container">
-            <GrowthChart
-              data={results.chartData}
-              calculatorType={calculatorType}
-            />
-            <BreakdownChart
-              data={results.pieChartData}
-              calculatorType={calculatorType}
-            />
-            <MilestoneChart data={results.croresMilestones} />
-          </div>
-        ) : (
-          <div className="text-center text-sm text-muted-foreground">
-            Enter some values to see the projections
-          </div>
-        )}
+        <GraphSection
+          showGraphs={showGraphs}
+          results={results}
+          calculatorType={calculatorType}
+        />
       </CardContent>
+      <Separator className="mt-2" />
+      <div className="text-center text-xs text-muted-foreground">
+        MIT Licensed © 2024 Bipin | v{version}
+      </div>
     </Card>
   );
 }
