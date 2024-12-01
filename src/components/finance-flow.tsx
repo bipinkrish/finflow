@@ -314,7 +314,7 @@ export function FinanceFlow() {
       </CardContent>
       <Separator className="mt-2" />
       <div className="text-center text-xs text-muted-foreground">
-        MIT Licensed © 2024 Bipin | v{version} | Best viewed in Desktop Browser
+        v{version} | Best viewed in Desktop Browser
       </div>
     </Card>
   );
