@@ -84,7 +84,7 @@ export const CalculatorOptions: FC<CalculatorOptionsProps> = ({
             <ToggleGroupItem value="SWP">SWP</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <div className="flex items-center gap-1 md:gap-2">
+        <div className="flex items-center gap-1">
           <Toggle
             variant="outline"
             onPressedChange={setRealMode}
@@ -92,9 +92,9 @@ export const CalculatorOptions: FC<CalculatorOptionsProps> = ({
           >
             Real Mode
           </Toggle>
-          <div className="text-xs text-muted-foreground text-center sm:text-left sm:ml-4 w-full sm:w-auto">
-            <span className="block">5% p.a. Inflation and 12.5%</span>
-            <span className="block">LTCG Tax will be considered.</span>
+          <div className="text-xs text-muted-foreground text-center sm:ml-4 w-full sm:w-auto">
+            <span className="block">5% p.a. Inflation and 12.5% LTCG</span>
+            <span className="block">tax will be considered on profit.</span>
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@ export function FinanceFlow() {
       </CardContent>
       <Separator className="mt-2" />
       <div className="text-center text-xs text-muted-foreground">
-        MIT Licensed © 2024 Bipin | v{version}
+        MIT Licensed © 2024 Bipin | v{version} | Best viewed in Desktop Browser
       </div>
     </Card>
   );

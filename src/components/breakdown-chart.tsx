@@ -72,7 +72,7 @@ export function BreakdownChart({ data, calculatorType }: BreakdownChartProps) {
       </div>
 
       {/* Right: Labels and Values */}
-      <div className="flex-1 h-full content-center flex-col md:flex-row md:mt-0 md:ml-0 md:mr-[10%] w-1/2 md:-ml-2 md:w-[86%]">
+      <div className="flex-1 h-full content-center flex-col md:flex-row md:mt-0 md:mr-[10%] w-1/2 md:-ml-2 md:w-[86%]">
         <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
           {[colors.graphs.investment, colors.graphs.profit].map(
             (color, index) => (

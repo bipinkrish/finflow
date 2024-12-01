@@ -1,8 +1,5 @@
 import { CRORE } from "./constants";
 
-const inflationRate = 5; // per year
-const taxRate = 12.5; // of total
-
 export interface CalculationParams {
   initialInvestment: number;
   monthlyAmount: number;
@@ -36,21 +33,28 @@ function calculatePresentValue(
   return futureValue / Math.pow(1 + rate, years);
 }
 
-function calculateAfterTax(amount: number, taxRate: number) {
-  const rate = taxRate / 100;
-  return amount * (1 - rate);
+function calculateAfterTax(
+  totalValue: number,
+  investedAmount: number,
+  taxRate: number
+) {
+  const profit = Math.max(0, totalValue - investedAmount);
+  const taxAmount = profit * (taxRate / 100);
+  return totalValue - taxAmount;
 }
 
 function makeItReal(
   { chartData, pieChartData, croresMilestones }: CalculationResult,
   inflationRate: number,
   taxRate: number,
-  yearsToProject: number
+  yearsToProject: number,
+  initialInvestment: number
 ): CalculationResult {
   const realChartData = chartData.map(({ year, value }) => ({
     year,
     value: calculateAfterTax(
       calculatePresentValue(value, inflationRate, year),
+      calculatePresentValue(initialInvestment, inflationRate, year),
       taxRate
     ),
   }));
@@ -59,6 +63,7 @@ function makeItReal(
     name,
     value: calculateAfterTax(
       calculatePresentValue(value, inflationRate, yearsToProject),
+      calculatePresentValue(initialInvestment, inflationRate, yearsToProject),
       taxRate
     ),
   }));
@@ -166,8 +171,17 @@ export function calculate(
     croresMilestones,
   };
 
+  const inflationRate = 5; // per year
+  const taxRate = 12.5; // of total of profit
+
   if (realMode) {
-    return makeItReal(baseValues, inflationRate, taxRate, yearsToProject);
+    return makeItReal(
+      baseValues,
+      inflationRate,
+      taxRate,
+      yearsToProject,
+      totalContributed
+    );
   }
   return baseValues;
 }
