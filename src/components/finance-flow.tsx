@@ -94,7 +94,7 @@ export const CalculatorOptions: FC<CalculatorOptionsProps> = ({
           </Toggle>
           <div className="text-xs text-muted-foreground text-center sm:ml-4 w-full sm:w-auto">
             <span className="block">5% p.a. Inflation and 12.5% LTCG</span>
-            <span className="block">tax will be considered on profit.</span>
+            <span className="block">tax on profit will be considered.</span>
           </div>
         </div>
       </div>
